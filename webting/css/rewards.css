@@ -1,0 +1,55 @@
+/* Rewards Management Styles */
+
+.rewards-dashboard {
+    display: flex;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.rewards-sidebar {
+    flex: 1;
+    min-width: 250px;
+    max-width: 300px;
+}
+
+.rewards-catalog {
+    flex: 3;
+    min-width: 300px;
+}
+
+.user-tier-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 136, 0, 0.3);
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 0 15px rgba(255, 107, 0, 0.2);
+}
+
+.user-tier-card h3 {
+    color: var(--primary);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.user-tier-card p {
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+.progress-bar-bg {
+    background: rgba(255, 255, 255, 0.1);
+    height: 10px;
+    border-radius: 5px;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.progress-bar-fill {
+    background: linear-gradient(90deg, var(--primary), var(--primary-hover));
+    height: 100%;
+    width: 0%; /* Dynamic */
+    transition: width 0.5s ease-in-out;
+}
