@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webting - Plataforma de Juegos Educativos</title>
+  <meta name="description" content="Plataforma interactiva de juegos educativos con emulación en tiempo real, puntuaciones y CMS.">
+  
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/game.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/documents.css">
+  <link rel="stylesheet" href="css/rewards.css">
+</head>
+<body>
+
+  <!-- NAVEGACIÓN PRINCIPAL -->
+  <header class="navbar">
+    <div class="mobile-nav-wrapper">
+      <a href="index.html" class="brand">
+        <span class="brand-icon">
+          <svg class="icon-svg" style="width: 1.5rem; height: 1.5rem;" viewBox="0 0 24 24"><path fill="currentColor" d="M21 3H3C1.9 3 1 3.9 1 5V19C1 20.1 1.9 21 3 21H21C22.1 21 23 20.1 23 19V5C23 3.9 22.1 3 21 3ZM21 19H3V5H21V19ZM11 13H13V17H11V13ZM11 7H13V11H11V7Z"/></svg>
+        </span> WEBTING
+      </a>
+      <button id="mobileMenuBtn" class="mobile-menu-btn">
+        <svg class="icon-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+      </button>
+    </div>
+
+    <div id="desktopNavElements" class="desktop-nav-elements">
+      <div id="navLinks" class="nav-links">
+        <a href="#" onclick="WebtingApp.showView('games')" class="nav-link active">Juegos</a>
+        <a href="#" onclick="WebtingApp.showView('documents')" class="nav-link">Documentos</a>
+        <a href="#" onclick="WebtingApp.showView('rewards')" class="nav-link">Recompensas</a>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Buscar título o materia...">
+      </div>
+
+      <div class="nav-actions">
+        <!-- Botón Modo Oscuro -->
+        <button id="btnThemeToggle" class="btn-theme-toggle" title="Alternar Tema Oscuro">
+          <!-- SVG se inserta desde JS -->
+        </button>
+
+        <span id="userBadge" class="user-badge" style="display: none;">
+          <svg class="icon-svg" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          <span class="username-text">Usuario</span>
+        </span>
+
+        <span id="adminBadge" class="admin-badge" style="display: none;">ADMIN</span>
+
+        <button id="btnAdminPanel" class="btn btn-secondary" style="display: none;">PANEL ADMIN</button>
+        <button id="btnLoginNav" class="btn btn-primary">INICIAR SESIÓN</button>
+        <button id="btnLogout" class="btn btn-danger" style="display: none;">SALIR</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO BANNER -->
+  <section class="hero-banner">
+    <div class="hero-content">
+      <h1 id="heroTitle" class="hero-title">APRENDE JUGANDO EN VIVO</h1>
+      <p id="heroSubtitle" class="hero-subtitle">Plataforma de juegos educativos interactivos con emulación en tiempo real y puntuación por tiempo activo.</p>
+    </div>
+  </section>
+
+  <!-- SECCIÓN DE FILTROS -->
+  <section class="filter-section">
+    <div class="filter-card">
+      <div class="filter-row">
+        <span class="filter-label">MATERIA:</span>
+        <div class="chip-group">
+          <button class="chip active-orange" data-filter-type="category" data-filter-value="all">TODAS</button>
+          <button class="chip" data-filter-type="category" data-filter-value="Matemáticas">MATEMÁTICAS</button>
+          <button class="chip" data-filter-type="category" data-filter-value="Ciencias">CIENCIAS</button>
+          <button class="chip" data-filter-type="category" data-filter-value="Lenguaje">LENGUAJE</button>
+          <button class="chip" data-filter-type="category" data-filter-value="Historia">HISTORIA</button>
+        </div>
+      </div>
+      <div class="filter-row">
+        <span class="filter-label">DIFICULTAD:</span>
+        <div class="chip-group">
+          <button class="chip active" data-filter-type="difficulty" data-filter-value="all">TODAS</button>
+          <button class="chip" data-filter-type="difficulty" data-filter-value="Fácil">FÁCIL</button>
+          <button class="chip" data-filter-type="difficulty" data-filter-value="Medio">MEDIO</button>
+          <button class="chip" data-filter-type="difficulty" data-filter-value="Difícil">DIFÍCIL</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <main class="main-content">
+    <!-- VISTA: JUEGOS -->
+    <div id="games-view" class="view-section active">
+      <div id="gamesGrid" class="games-grid">
+        <!-- Carga dinámica -->
+      </div>
+    </div>
+    
+    <!-- VISTA: DOCUMENTOS -->
+    <div id="documents-view" class="view-section" style="display:none;">
+      <div class="documents-header">
+        <h2>Gestión de Documentos</h2>
+        <button id="btnUploadDoc" class="btn btn-primary" style="display:none;">+ Subir Documento</button>
+      </div>
+      <div class="documents-controls">
+        <select id="docCategoryFilter" class="form-input">
+          <option value="All">Todas las categorías</option>
+          <option value="General">General</option>
+          <option value="Guías">Guías</option>
+          <option value="Formatos">Formatos</option>
+        </select>
+        <div class="view-toggles">
+          <button id="btnViewCards" class="btn active">Tarjetas</button>
+          <button id="btnViewList" class="btn">Lista</button>
+        </div>
+      </div>
+      <div id="documentsList" class="documents-grid cards-view">
+        <!-- Carga dinámica -->
+      </div>
+    </div>
+
+    <!-- VISTA: RECOMPENSAS -->
+    <div id="rewards-view" class="view-section" style="display:none;">
+      <div class="rewards-dashboard">
+        <div class="rewards-sidebar">
+          <div class="user-tier-card">
+            <h3 id="userTierName">Nivel Bronce</h3>
+            <div class="progress-bar-bg"><div id="userTierProgress" class="progress-bar-fill"></div></div>
+            <p><span id="userPoints">0</span> Pts</p>
+          </div>
+          <button id="btnRewardHistory" class="btn btn-secondary" style="width:100%; margin-top:1rem;">Historial</button>
+        </div>
+        <div class="rewards-catalog">
+          <h2>Catálogo de Canje</h2>
+          <div id="rewardsGrid" class="games-grid">
+            <!-- Carga dinámica -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>WEBTING v3.5 &copy; 2026 - Plataforma Educativa Pro</p>
+  </footer>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- MODAL: UPLOAD DOCUMENTO -->
+  <div id="uploadDocModal" class="modal-overlay" style="display:none;">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 class="modal-title">SUBIR DOCUMENTO</h2>
+        <button class="btn-close-game" onclick="document.getElementById('uploadDocModal').style.display='none'">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="uploadDocForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label class="form-label">Título</label>
+            <input type="text" id="docTitle" name="title" class="form-input" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Categoría</label>
+            <select id="docCategory" name="category" class="form-input">
+              <option value="General">General</option>
+              <option value="Guías">Guías</option>
+              <option value="Formatos">Formatos</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Archivo (PDF, DOCX, XLSX)</label>
+            <input type="file" id="docFile" name="document" class="form-input" accept=".pdf,.docx,.xlsx" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Subir</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: LECTURA DE DOCUMENTOS PÚBLICOS -->
+  <div id="documentModal" class="document-modal">
+    <div class="document-box">
+      <div class="document-header">
+        <h2 id="docModalTitle" class="modal-title">Cargando...</h2>
+        <button class="btn-close-game" onclick="WebtingApp.closeDocument()">&times;</button>
+      </div>
+      <div id="docModalBody" class="document-body">
+        <!-- Contenido HTML dinámico -->
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: AUTENTICACIÓN -->
+  <div id="authModal" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h2 id="authTitle" class="modal-title">INICIAR SESIÓN</h2>
+        <button class="btn-close-game" onclick="AuthEngine.closeAuthModal()">&times;</button>
+      </div>
+      <div class="admin-tab-bar">
+        <button id="tabLogin" class="admin-tab-btn active">Ingresar</button>
+        <button id="tabRegister" class="admin-tab-btn">Registrarse</button>
+      </div>
+      <div class="modal-body">
+        <form id="authForm" data-mode="login">
+          <div class="form-group">
+            <label class="form-label">Nombre de Usuario</label>
+            <input type="text" id="authUsername" class="form-input" placeholder="Ingresa tu usuario" required>
+          </div>
+          <div id="emailGroup" class="form-group" style="display: none;">
+            <label class="form-label">Correo Gmail (@gmail.com)</label>
+            <input type="email" id="authEmail" class="form-input" placeholder="ejemplo@gmail.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Contraseña</label>
+            <input type="password" id="authPassword" class="form-input" placeholder="••••••••" required>
+          </div>
+          <div id="verificationSection" class="form-group" style="display: none;">
+            <label class="form-label">Código de Verificación Enviado a Gmail</label>
+            <div style="display: flex; gap: 0.5rem;">
+              <input type="text" id="verificationCodeInput" class="form-input" placeholder="Código de 6 dígitos" maxlength="6">
+              <button type="button" id="btnVerifyCode" class="btn btn-secondary">Verificar</button>
+            </div>
+          </div>
+          <div style="margin-top: 1rem;">
+            <button type="submit" id="btnSubmitAuth" class="btn btn-primary" style="width: 100%;">ENTRAR</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EMULADOR DE JUEGOS -->
+  <div id="gameModal" class="game-modal">
+    <div class="game-modal-header">
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <h2 id="gameModalTitle" class="game-modal-title">Nombre del Juego</h2>
+        <div id="liveScoreBar" class="live-score-bar">
+          <span>PUNTAJE REAL:</span>
+          <span id="liveScoreValue">0 PTS</span>
+        </div>
+      </div>
+      <button id="btnCloseGame" class="btn-close-game">&times;</button>
+    </div>
+    <div class="game-modal-body">
+      <aside class="game-sidebar-left">
+        <h3 class="sidebar-title">TOP PUNTUACIONES</h3>
+        <div id="gameScoresList" class="scores-list"></div>
+      </aside>
+      <main class="game-emulator-container">
+        <div class="iframe-wrapper">
+          <iframe id="gameIframe" class="game-iframe" src="" title="Emulador de Juego"></iframe>
+        </div>
+      </main>
+      <aside class="game-sidebar-right">
+        <h3 class="sidebar-title">CONTROLES</h3>
+        <div id="gameControlsList" class="controls-list"></div>
+      </aside>
+    </div>
+  </div>
+
+  <!-- MODAL: PANEL ADMINISTRATIVO (5 PESTAÑAS) -->
+  <div id="adminPanelModal" class="modal-overlay">
+    <div class="modal-box modal-large">
+      <div class="modal-header">
+        <h2 class="modal-title">PANEL DE ADMINISTRACIÓN</h2>
+        <button class="btn-close-game" onclick="AdminEngine.closeAdminPanel()">&times;</button>
+      </div>
+      <div class="admin-tab-bar">
+        <button class="admin-tab-btn active" data-tab="dashboard">Estadísticas</button>
+        <button class="admin-tab-btn" data-tab="games">Juegos</button>
+        <button class="admin-tab-btn" data-tab="docs">Documentos</button>
+        <button class="admin-tab-btn" data-tab="users">Usuarios</button>
+        <button class="admin-tab-btn" data-tab="settings">Personalización</button>
+      </div>
+      <div class="modal-body">
+        <div id="tabPanel-dashboard" class="admin-tab-panel"><div id="statsContainer"></div></div>
+        
+        <div id="tabPanel-games" class="admin-tab-panel" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem;">Catálogo</h3>
+            <button id="btnCreateGame" class="btn btn-primary">+ AÑADIR JUEGO</button>
+          </div>
+          <div id="adminGamesList"></div>
+        </div>
+
+        <!-- Pestaña 3: Documentos CMS -->
+        <div id="tabPanel-docs" class="admin-tab-panel" style="display: none;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+            <h3 style="font-family: var(--font-heading); font-size: 1.5rem;">Gestor de Contenidos (CMS)</h3>
+            <button id="btnCreateDoc" class="btn btn-primary">+ CREAR DOCUMENTO</button>
+          </div>
+          <div id="adminDocsList"></div>
+        </div>
+
+        <div id="tabPanel-users" class="admin-tab-panel" style="display: none;">
+          <h3 style="font-family: var(--font-heading); font-size: 1.5rem; margin-bottom: 1rem;">Cuentas Registradas</h3>
+          <div id="adminUsersList"></div>
+        </div>
+
+        <div id="tabPanel-settings" class="admin-tab-panel" style="display: none;">
+          <form id="settingsForm">
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label">Color Primario</label>
+                <input type="color" id="settingPrimaryColor" class="form-input" style="height: 45px; cursor: pointer;">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Color Secundario</label>
+                <input type="color" id="settingSecondaryColor" class="form-input" style="height: 45px; cursor: pointer;">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Título del Banner</label>
+              <input type="text" id="settingBannerTitle" class="form-input">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Subtítulo del Banner</label>
+              <textarea id="settingBannerSubtitle" class="form-textarea" rows="2"></textarea>
+            </div>
+            <div style="margin-top: 1rem;">
+              <button type="submit" class="btn btn-primary">GUARDAR PERSONALIZACIÓN</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITOR DE JUEGOS (Oculto en este resumen visual) -->
+  <div id="gameEditorModal" class="modal-overlay">
+    <div class="modal-box modal-large">
+      <div class="modal-header"><h2 class="modal-title">EDITOR DE JUEGO</h2><button class="btn-close-game" id="btnCloseGameEditor">&times;</button></div>
+      <div class="modal-body">
+        <form id="gameEditorForm">
+          <div class="form-grid-2">
+            <input type="text" id="editorTitle" class="form-input" placeholder="Título" required>
+            <select id="editorSubject" class="form-select"><option>Matemáticas</option><option>Ciencias</option><option>Lenguaje</option><option>Historia</option></select>
+          </div>
+          <div class="form-grid-2" style="margin-top:1rem;">
+            <select id="editorDifficulty" class="form-select"><option>Fácil</option><option>Medio</option><option>Difícil</option></select>
+            <select id="editorAgeRange" class="form-select"><option>5-7</option><option>6-8</option><option>9-12</option><option>12+</option></select>
+          </div>
+          <input type="text" id="editorCompetency" class="form-input" placeholder="Competencia" style="margin-top:1rem;">
+          <input type="url" id="editorIframeUrl" class="form-input" placeholder="Iframe URL" required style="margin-top:1rem;">
+          <input type="url" id="editorLogoUrl" class="form-input" placeholder="Logo URL" style="margin-top:1rem;">
+          <textarea id="editorHoverDescription" class="form-textarea" placeholder="Descripción" style="margin-top:1rem;"></textarea>
+          
+          <div class="form-grid-2" style="margin-top:1rem;">
+            <label class="toggle-wrapper"><span>Permitir Scroll</span> <label class="toggle-switch"><input type="checkbox" id="editorIframeScroll"><span class="toggle-slider"></span></label></label>
+            <label class="toggle-wrapper"><span>Pantalla Completa</span> <label class="toggle-switch"><input type="checkbox" id="editorIframeFullscreen" checked><span class="toggle-slider"></span></label></label>
+          </div>
+          <input type="text" id="editorIframeSandbox" class="form-input" placeholder="Atributo Sandbox" style="margin-top:1rem;">
+          <label class="toggle-wrapper" style="margin-top:1rem;"><span>Activar Puntos Reales</span> <label class="toggle-switch"><input type="checkbox" id="editorScoringEnabled" checked><span class="toggle-slider"></span></label></label>
+          
+          <div id="controlsContainer" style="margin-top:1rem;"></div>
+          <button type="button" id="btnAddControlRow" class="btn btn-secondary" style="margin-top:0.5rem;">+ Control</button>
+          
+          <button type="submit" class="btn btn-primary" style="margin-top:1.5rem; width:100%;">GUARDAR JUEGO</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDITOR DE DOCUMENTOS (CMS WYSIWYG) -->
+  <div id="docEditorModal" class="modal-overlay">
+    <div class="modal-box modal-large">
+      <div class="modal-header">
+        <h2 class="modal-title">CREAR / EDITAR DOCUMENTO</h2>
+        <button class="btn-close-game" id="btnCloseDocEditor">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="docEditorForm">
+          <div class="form-group" style="margin-bottom: 1rem;">
+            <label class="form-label">Título del Documento</label>
+            <input type="text" id="docTitle" class="form-input" placeholder="Ej: Reglas de la Plataforma" required>
+          </div>
+
+          <div class="rich-editor-container">
+            <div class="editor-toolbar">
+              <button type="button" class="editor-btn" onclick="AdminEngine.formatDoc('bold')" title="Negrita"><b>B</b></button>
+              <button type="button" class="editor-btn" onclick="AdminEngine.formatDoc('italic')" title="Cursiva"><i>I</i></button>
+              <button type="button" class="editor-btn" onclick="AdminEngine.formatDoc('underline')" title="Subrayado"><u>U</u></button>
+              <button type="button" class="editor-btn" onclick="AdminEngine.formatDoc('formatBlock', 'H2')" title="Título">H2</button>
+              <button type="button" class="editor-btn" onclick="AdminEngine.formatDoc('formatBlock', 'P')" title="Párrafo Normal">P</button>
+              <button type="button" class="editor-btn" onclick="AdminEngine.formatDoc('insertUnorderedList')" title="Lista Viñetas">• Lista</button>
+              <button type="button" class="editor-btn" onclick="AdminEngine.insertImagePrompt()" title="Insertar Imagen URL">🖼️ Imagen</button>
+              <select class="editor-btn" onchange="AdminEngine.formatDoc('fontSize', this.value); this.selectedIndex=0;" title="Tamaño de Fuente">
+                <option value="">Tamaño</option>
+                <option value="3">Normal</option>
+                <option value="5">Grande</option>
+                <option value="7">Enorme</option>
+              </select>
+            </div>
+            <div id="docEditorContent" class="editor-content" contenteditable="true" placeholder="Escribe el contenido del documento aquí..."></div>
+          </div>
+
+          <div class="toggle-wrapper" style="margin-top: 1.5rem;">
+            <span class="toggle-label">Publicar (Visible para todos)</span>
+            <label class="toggle-switch">
+              <input type="checkbox" id="docPublished" checked>
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+
+          <div style="margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary" style="width: 100%;">GUARDAR DOCUMENTO</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/gameEngine.js"></script>
+  <script src="js/adminEngine.js"></script>
+  <script src="js/documentsEngine.js"></script>
+  <script src="js/rewardsEngine.js"></script>
+</body>
+</html>
